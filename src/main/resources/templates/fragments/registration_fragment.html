@@ -8,7 +8,7 @@
             </h3>
         </div>
         <div class="panel-body">
-		<form action="#" th:action="@{/registration}" method="post" class="form-horizontal" th:object="${account}">
+		<form action="#" th:action="@{/registration}" method="post" class="form-horizontal" th:object="${user}">
             <div id="registration-error" class="hide col-md-8 alert alert-block alert-error fade in">
 				<a data-dismiss="alert" class="close">x</a>
 				<h4 class="alert-heading"></h4>
@@ -63,6 +63,7 @@
                         <br/> <span id="usernameError" class="help-inline hide">UsernameError</span>
 					</div>
 				</div>
+				<!-- 
 				<div id="openbalance-control" class="form-group">
                     <div class="col-sm-3">
                         <label for="openbalance-input" class="control-label">Opening Balance:</label>
@@ -72,6 +73,7 @@
                         <br/> <span id="openbalanceError" class="help-inline hide">Open Balance Error</span>
 					</div>
 				</div>
+				 -->
 				<div id="creditcard-control" class="form-group">
                     <div class="col-sm-3">
                         <label for="creditcard-input" class="control-label">Credit Card #:</label>

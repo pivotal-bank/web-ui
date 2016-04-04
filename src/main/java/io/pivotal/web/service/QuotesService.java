@@ -29,9 +29,9 @@ import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 
 @Service
 @RefreshScope
-public class MarketService {
+public class QuotesService {
 	private static final Logger logger = LoggerFactory
-			.getLogger(MarketService.class);
+			.getLogger(QuotesService.class);
 	@Autowired
 	@LoadBalanced
 	private RestTemplate restTemplate;
@@ -39,10 +39,6 @@ public class MarketService {
 
     @Value("${pivotal.quotesService.name}")
 	private String quotesService;
-	
-    @Value("${pivotal.portfolioService.name}")
-	private String portfolioService;
-    
 	
 	@HystrixCommand(fallbackMethod = "getQuoteFallback")
 	public Quote getQuote(String symbol) {
@@ -110,35 +106,6 @@ public class MarketService {
 			}
 		}
 		return getMultipleQuotes(builder.toString());
-	}
-	
-	
-	
-	public Order sendOrder(Order order ) throws OrderNotSavedException{
-		logger.debug("send order: " + order);
-		
-		//check result of http request to ensure its ok.
-		
-		ResponseEntity<Order>  result = restTemplate.postForEntity("http://" + portfolioService + "/portfolio/{accountId}", order, Order.class, order.getAccountId());
-		if (result.getStatusCode() == HttpStatus.INTERNAL_SERVER_ERROR) {
-			throw new OrderNotSavedException("Could not save the order");
-		}
-		logger.debug("Order saved:: " + result.getBody());
-		return result.getBody();
-	}
-	
-	@HystrixCommand(fallbackMethod = "getPortfolioFallback")
-	public Portfolio getPortfolio(String accountId) {
-		Portfolio folio = restTemplate.getForObject("http://" + portfolioService + "/portfolio/{accountid}", Portfolio.class, accountId);
-		logger.debug("Portfolio received: " + folio);
-		return folio;
-	}
-	
-	private Portfolio getPortfolioFallback(String accountId) {
-		logger.debug("Portfolio fallback");
-		Portfolio folio = new Portfolio();
-		folio.setAccountId(accountId);
-		return folio;
 	}
 
 }

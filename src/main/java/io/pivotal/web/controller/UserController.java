@@ -1,21 +1,21 @@
 package io.pivotal.web.controller;
 
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import io.pivotal.web.domain.Account;
+import io.pivotal.web.domain.User;
 import io.pivotal.web.domain.AuthenticationRequest;
 import io.pivotal.web.service.MarketSummaryService;
+import io.pivotal.web.service.PortfolioService;
 import io.pivotal.web.service.UserService;
-import io.pivotal.web.service.MarketService;
+import io.pivotal.web.service.AccountService;
+import io.pivotal.web.service.QuotesService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -34,10 +34,16 @@ public class UserController {
 			.getLogger(UserController.class);
 	
 	@Autowired
-	private UserService accountService;
-		
+	private UserService userService;
+	
 	@Autowired
-	private MarketService marketService;
+	private AccountService accountService;
+	
+	@Autowired
+	private QuotesService marketService;
+	
+	@Autowired
+	private PortfolioService portfolioService;
 	
 	@Autowired
 	private MarketSummaryService summaryService;
@@ -56,11 +62,13 @@ public class UserController {
 		    logger.debug("User logged in: " + currentUserName);
 		    
 		    try {
-		    	model.addAttribute("portfolio",marketService.getPortfolio(currentUserName));
+		    	model.addAttribute("portfolio",portfolioService.getPortfolio(currentUserName));
 		    } catch (HttpServerErrorException e) {
 		    	model.addAttribute("portfolioRetrievalError",e.getMessage());
 		    }
-		    model.addAttribute("account",accountService.getAccount(currentUserName));
+		    User user = userService.getUser(currentUserName);
+		    model.addAttribute("user", user);
+		    model.addAttribute("accounts",accountService.getAccounts(currentUserName));
 		}
 		
 		return "index";
@@ -75,7 +83,7 @@ public class UserController {
 		//CustomDetails userDetails = (CustomDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		logger.debug("Principal: " + SecurityContextHolder.getContext().
 				   getAuthentication().getPrincipal());
-		Map<String,Object> params = accountService.login(login);
+		Map<String,Object> params = userService.login(login);
 		model.addAllAttributes(params);
 		//logger.info("got user details, token: " + userDetails.getToken());
 		return "index";
@@ -96,26 +104,24 @@ public class UserController {
 	
 	@RequestMapping(value = "/registration", method = RequestMethod.GET)
 	public String registration(Model model) {
-		Account account = new Account();
-		account.setBalance(new BigDecimal(100000));
-		model.addAttribute("account", account);
+		User user = new User();
+		//user.setBalance(new BigDecimal(100000));
+		model.addAttribute("user", user);
 		return "registration";
 	}
 
 	@RequestMapping(value = "/registration", method = RequestMethod.POST)
-	public String register(Model model, @ModelAttribute(value="account") Account account) {
-		logger.info("register: user:" + account.getUserid());
+	public String register(Model model, @ModelAttribute(value="user") User user) {
+		logger.info("register: user:" + user.getUserid());
 		
-		//need to set some stuff on account...
-		
-		account.setOpenbalance(account.getBalance());
-		account.setCreationdate(new Date());
+		//user.setOpenbalance(user.getBalance());
+		user.setCreationdate(new Date());
 		
 		AuthenticationRequest login = new AuthenticationRequest();
-		login.setUsername(account.getUserid());
+		login.setUsername(user.getUserid());
 		model.addAttribute("login", login);
 		model.addAttribute("marketSummary", summaryService.getMarketSummary());
-		accountService.createAccount(account);
+		userService.createUser(user);
 		return "index";
 	}
 	@ExceptionHandler({ Exception.class })

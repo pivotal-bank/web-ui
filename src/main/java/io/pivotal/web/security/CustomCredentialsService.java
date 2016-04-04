@@ -1,6 +1,6 @@
 package io.pivotal.web.security;
 
-import io.pivotal.web.domain.Account;
+import io.pivotal.web.domain.User;
 import io.pivotal.web.service.UserService;
 
 import java.util.ArrayList;
@@ -22,7 +22,7 @@ public class CustomCredentialsService implements UserDetailsService {
 	private static final Logger logger = LoggerFactory.getLogger(CustomCredentialsService.class);
 	
 	@Autowired
-	private UserService accountservice;
+	private UserService userservice;
 			
 	@Override
 	public UserDetails loadUserByUsername(String username)
@@ -34,19 +34,19 @@ public class CustomCredentialsService implements UserDetailsService {
 			throw new UsernameNotFoundException(username);
 		}
 		
-		Account account = accountservice.getAccount(username);
-		logger.info("Got account in credentials: " + account);
-		UserDetails custom = new CustomDetails(account); 
+		User user = userservice.getUser(username);
+		logger.info("Got account in credentials: " + user);
+		UserDetails custom = new CustomDetails(user); 
 		
 		return custom;
 	}
 	
 	public class CustomDetails implements UserDetails {
 		private static final String ROLE = "USER"; 
-		private Account account;
+		private User user;
 		
-		public CustomDetails(Account account) {
-			this.account = account;
+		public CustomDetails(User user) {
+			this.user = user;
 		}
 
 		@Override
@@ -59,12 +59,12 @@ public class CustomCredentialsService implements UserDetailsService {
 
 		@Override
 		public String getPassword() {
-			return account.getPasswd();
+			return user.getPasswd();
 		}
 
 		@Override
 		public String getUsername() {
-			return account.getUserid();
+			return user.getUserid();
 		}
 
 		@Override
@@ -88,7 +88,7 @@ public class CustomCredentialsService implements UserDetailsService {
 		}
 		
 		public String getToken() {
-			return account.getAuthtoken();
+			return user.getAuthtoken();
 		}
 		
 	}

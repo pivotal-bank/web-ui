@@ -12,7 +12,8 @@ import io.pivotal.web.domain.CompanyInfo;
 import io.pivotal.web.domain.Order;
 import io.pivotal.web.domain.Quote;
 import io.pivotal.web.domain.Search;
-import io.pivotal.web.service.MarketService;
+import io.pivotal.web.service.PortfolioService;
+import io.pivotal.web.service.QuotesService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +37,10 @@ public class TradeController {
 			.getLogger(TradeController.class);
 	
 	@Autowired
-	private MarketService marketService;
+	private QuotesService marketService;
+	
+	@Autowired
+	private PortfolioService portfolioService;
 	
 	@RequestMapping(value = "/trade", method = RequestMethod.GET)
 	public String showTrade(Model model) {
@@ -52,7 +56,7 @@ public class TradeController {
 		    model.addAttribute("order", new Order());
 		    //TODO: add account summary?
 		    try {
-		    	model.addAttribute("portfolio",marketService.getPortfolio(currentUserName));
+		    	model.addAttribute("portfolio",portfolioService.getPortfolio(currentUserName));
 		    } catch (HttpServerErrorException e) {
 		    	model.addAttribute("portfolioRetrievalError",e.getMessage());
 		    }
@@ -81,7 +85,7 @@ public class TradeController {
 		    model.addAttribute("order", new Order());
 		    //TODO: add portfolio and account summary.
 		    try {
-		    	model.addAttribute("portfolio",marketService.getPortfolio(currentUserName));
+		    	model.addAttribute("portfolio",portfolioService.getPortfolio(currentUserName));
 		    } catch (HttpServerErrorException e) {
 		    	model.addAttribute("portfolioRetrievalError",e.getMessage());
 		    }
@@ -103,11 +107,11 @@ public class TradeController {
 				    order.setAccountId(currentUserName);
 				    order.setCompletionDate(new Date());
 
-				    Order result = marketService.sendOrder(order);
+				    Order result = portfolioService.sendOrder(order);
 				    model.addAttribute("savedOrder", result);
 				    model.addAttribute("order", new Order());
 				    try {
-				    	model.addAttribute("portfolio",marketService.getPortfolio(currentUserName));
+				    	model.addAttribute("portfolio",portfolioService.getPortfolio(currentUserName));
 				    } catch (HttpServerErrorException e) {
 				    	model.addAttribute("portfolioRetrievalError",e.getMessage());
 				    }
