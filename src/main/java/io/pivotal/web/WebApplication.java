@@ -18,7 +18,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 public class WebApplication {
 	
 	@Bean
-	public Sampler<?> defaultSampler() {
+	public Sampler defaultSampler() {
 		return new AlwaysSampler();
 	}
 	
