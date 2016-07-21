@@ -28,8 +28,10 @@
             <div th:include="fragments/user_fragment :: user-stats" th:remove="tag"></div>
         </div>
 
-		<div class="col-md-6" th:include="fragments/marketsummary_fragment :: summary"></div>
-
+		<div class="col-md-6">
+			<div th:include="fragments/marketsummary_fragment :: summary"></div>
+			<div sec:authorize="hasAnyAuthority('USER')" th:if="${accounts != null}" th:include="fragments/accounts_fragment :: accounts-summary" th:remove="tag"></div>
+		</div>
     </div>
 
 

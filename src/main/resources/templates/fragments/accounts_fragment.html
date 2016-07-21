@@ -60,7 +60,10 @@
                         <label for="type-input" class="control-label">Type:</label>
                     </div>
 					<div class="col-sm-9">
-						<input type="text" value="" id="type-input" class="form-control focused" th:field="*{type}" />
+						<select id="type-input" class="form-control focused" th:field="*{type}">
+							<option th:value="CURRENT" th:text="CURRENT">CURRENT</option>
+							<option th:value="SAVINGS" th:text="SAVINGS">SAVINGS</option>
+						</select>
                         <br/> <span id="typeError" class="help-inline hide">Type Error</span>
 					</div>
 				</div>

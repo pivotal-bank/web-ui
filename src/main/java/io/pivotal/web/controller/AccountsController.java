@@ -75,13 +75,17 @@ public class AccountsController {
 	@RequestMapping(value = "/openaccount", method = RequestMethod.POST)
 	public String saveAccount(Model model,@ModelAttribute(value="newaccount") Account account) {
 		logger.debug("saveAccounts: creating account: " + account);
-		account.setUserid(SecurityContextHolder.getContext().getAuthentication().getName());
+		String currentUserName = SecurityContextHolder.getContext().getAuthentication().getName(); 
+		account.setUserid(currentUserName);
 		account.setBalance(account.getOpenbalance());
 		account.setCreationdate(new Date());
 		
 		logger.info("saveAccounts: saving account: " + account);
 		
 		accountService.createAccount(account);
+		
+		model.addAttribute("marketSummary", summaryService.getMarketSummary());
+		model.addAttribute("accounts",accountService.getAccounts(currentUserName));
 		
 		return "accounts";
 	}

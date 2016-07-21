@@ -62,6 +62,7 @@ public class UserController {
 		    logger.debug("User logged in: " + currentUserName);
 		    
 		    try {
+		    	model.addAttribute("accounts",accountService.getAccounts(currentUserName));
 		    	model.addAttribute("portfolio",portfolioService.getPortfolio(currentUserName));
 		    } catch (HttpServerErrorException e) {
 		    	model.addAttribute("portfolioRetrievalError",e.getMessage());
