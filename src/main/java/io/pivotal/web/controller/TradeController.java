@@ -129,15 +129,18 @@ public class TradeController {
 		/*
 		 * Sleuth currently doesn't work with parallelStreams
 		 */
-		//get district companyinfos and get their respective quotes in parallel.
-		//List<Quote> result = companies.stream().collect(Collectors.toCollection(
-		//	      () -> new TreeSet<CompanyInfo>((p1, p2) -> p1.getSymbol().compareTo(p2.getSymbol())) 
-		//		)).parallelStream().map(n -> getQuote(n.getSymbol())).collect(Collectors.toList());
-		List<Quote> result = companies.stream().collect(Collectors.toCollection(
-			      () -> new TreeSet<CompanyInfo>((p1, p2) -> p1.getSymbol().compareTo(p2.getSymbol())) 
-				)).stream().map(n -> getQuote(n.getSymbol())).collect(Collectors.toList());
-		
-		List<Quote> quotes = result.parallelStream().filter(n -> n.getStatus().startsWith("SUCCESS")).collect(Collectors.toList());
+		//get distinct companyinfos and get their respective quotes in parallel.
+
+		List<String> symbols = companies.stream().map(company -> company.getSymbol()).collect(Collectors.toList());
+		logger.debug("symbols: fetching "+ symbols.size() + " quotes for following symbols: " + symbols);
+		List<String> distinctsymbols = symbols.stream().distinct().collect(Collectors.toList());
+		logger.debug("distinct: fetching "+ distinctsymbols.size() + " quotes for following symbols: " + distinctsymbols);
+		List<Quote> quotes;
+		if (distinctsymbols.size() > 0) {
+			quotes = marketService.getMultipleQuotes(distinctsymbols).stream().distinct().filter(quote -> quote.getName() != null && !"".equals(quote.getName())).collect(Collectors.toList());
+		} else {
+			quotes = new ArrayList<>();
+		}
 		return quotes;
 	}
 	
@@ -155,4 +158,5 @@ public class TradeController {
 		model.setViewName("error");
 		return model;
 	}
+	
 }

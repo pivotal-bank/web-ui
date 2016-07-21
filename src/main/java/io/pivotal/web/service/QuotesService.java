@@ -43,13 +43,17 @@ public class QuotesService {
 	@HystrixCommand(fallbackMethod = "getQuoteFallback")
 	public Quote getQuote(String symbol) {
 		logger.debug("Fetching quote: " + symbol);
-		Quote quote = restTemplate.getForObject("http://" + quotesService + "/quote/{symbol}", Quote.class, symbol);
-		return quote;
+		List<Quote> quotes = getMultipleQuotes(symbol);
+		if (quotes.size() == 1 ) {
+			logger.debug("Fetched quote: " + quotes.get(0));
+			return quotes.get(0);
+		}
+		logger.debug("exception: should only be 1 quote and got multiple or zero: " + quotes.size());
+		return new Quote();
 	}
 	
 	private Quote getQuoteFallback(String symbol) {
 		logger.debug("Fetching fallback quote for: " + symbol);
-		//Quote quote = restTemplate.getForObject("http://quotes/quote/{symbol}", Quote.class, symbol);
 		Quote quote = new Quote();
 		quote.setSymbol(symbol);
 		quote.setStatus("FAILED");

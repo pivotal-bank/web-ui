@@ -27,6 +27,7 @@
 					<tr>
 						<th>Company name</th>
 						<th>Symbol</th>
+						<th>Currency</th>
 						<th>Price</th>
 						<th>Change</th>
 						<th>Change YTD</th>
@@ -38,6 +39,7 @@
 					<tr class="caps" th:each="quote : ${quotes}">
 						<td th:text="${quote.name}"></td>
 						<td th:text="${quote.symbol}"></td>
+						<td th:text="${quote.currency}"></td>
 						<td th:text="${quote.lastPrice}"></td>
 						<td th:text="${#numbers.formatDecimal(quote.change, 0, 'COMMA', 2, 'POINT')}"></td>
 						<td th:text="${quote.changeYTD}"></td>
