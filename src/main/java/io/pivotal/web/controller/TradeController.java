@@ -8,10 +8,12 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
+import io.pivotal.web.domain.Account;
 import io.pivotal.web.domain.CompanyInfo;
 import io.pivotal.web.domain.Order;
 import io.pivotal.web.domain.Quote;
 import io.pivotal.web.domain.Search;
+import io.pivotal.web.service.AccountService;
 import io.pivotal.web.service.PortfolioService;
 import io.pivotal.web.service.QuotesService;
 
@@ -42,6 +44,9 @@ public class TradeController {
 	@Autowired
 	private PortfolioService portfolioService;
 	
+	@Autowired
+	private AccountService accountService;
+	
 	@RequestMapping(value = "/trade", method = RequestMethod.GET)
 	public String showTrade(Model model) {
 		logger.debug("/trade.GET");
@@ -54,9 +59,10 @@ public class TradeController {
 		    String currentUserName = authentication.getName();
 		    logger.debug("User logged in: " + currentUserName);
 		    model.addAttribute("order", new Order());
-		    //TODO: add account summary?
+		    
 		    try {
 		    	model.addAttribute("portfolio",portfolioService.getPortfolio(currentUserName));
+		    	model.addAttribute("accounts",accountService.getAccounts(currentUserName));
 		    } catch (HttpServerErrorException e) {
 		    	model.addAttribute("portfolioRetrievalError",e.getMessage());
 		    }
@@ -83,9 +89,12 @@ public class TradeController {
 		    String currentUserName = authentication.getName();
 		    logger.debug("User logged in: " + currentUserName);
 		    model.addAttribute("order", new Order());
+		    
+		    
 		    //TODO: add portfolio and account summary.
 		    try {
 		    	model.addAttribute("portfolio",portfolioService.getPortfolio(currentUserName));
+		    	model.addAttribute("accounts",accountService.getAccounts(currentUserName));
 		    } catch (HttpServerErrorException e) {
 		    	model.addAttribute("portfolioRetrievalError",e.getMessage());
 		    }
@@ -104,13 +113,14 @@ public class TradeController {
 				if (!(authentication instanceof AnonymousAuthenticationToken)) {
 				    String currentUserName = authentication.getName();
 				    logger.debug("/order ORDER: " + order);
-				    order.setAccountId(currentUserName);
+				    order.setUserId(currentUserName);
 				    order.setCompletionDate(new Date());
 
 				    Order result = portfolioService.sendOrder(order);
 				    model.addAttribute("savedOrder", result);
 				    model.addAttribute("order", new Order());
 				    try {
+				    	model.addAttribute("accounts",accountService.getAccounts(currentUserName));
 				    	model.addAttribute("portfolio",portfolioService.getPortfolio(currentUserName));
 				    } catch (HttpServerErrorException e) {
 				    	model.addAttribute("portfolioRetrievalError",e.getMessage());

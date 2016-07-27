@@ -65,7 +65,7 @@
 							<th class="text-center">Current unit value</th>
 							<th class="text-center">Current holding value</th>
 							<th class="text-center">Total Gain/Loss</th>
-							<th class="text-center" colspan="2">Sell</th>
+							<th class="text-center" colspan="3">Sell</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -87,6 +87,12 @@
 
 							<form th:id="'sellform'+${entryStat.index}" action="#" th:action="@{/order}"
 								method="post" th:object="${order}" class="form-inline">
+								<td>
+							<select th:field="*{accountId}" name="account">
+									<option th:each="account : ${accounts}" th:value="${account.id}"
+										th:text="${account.name + ' - ' + account.currency}">Account</option>
+							</select>
+							</td>
 								<td class="gray"><input type="hidden" th:value="${entry.value.symbol}"
 									id="symbol" name="symbol" /> <input type="hidden"
 									th:value="${#numbers.formatDecimal(entry.value.currentValue, 0, 'COMMA', 2, 'POINT')}"
@@ -132,6 +138,7 @@
 						<th class="text-center">Order Fee</th>
 						<th class="text-center">Order Type</th>
 						<th class="text-center">Symbol</th>
+						<th class="text-center">Currency</th>
 						<th class="text-center">Price</th>
 						<th class="text-center">Quantity</th>
 					</tr>
@@ -151,6 +158,7 @@
 						<td th:text="${txn.orderFee}">0</td>
 						<td th:text="${txn.orderType}">BUY</td>
 						<td th:text="${txn.symbol}">OOOO</td>
+						<td th:text="${txn.currency}">USD</td>
 						<td th:text="${txn.price}">0</td>
 						<td th:text="${txn.quantity}">0</td>
 					</tr>

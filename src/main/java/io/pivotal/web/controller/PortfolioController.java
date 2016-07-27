@@ -4,6 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import io.pivotal.web.domain.Order;
 import io.pivotal.web.domain.Search;
+import io.pivotal.web.service.AccountService;
 import io.pivotal.web.service.PortfolioService;
 import io.pivotal.web.service.QuotesService;
 import io.pivotal.web.service.MarketSummaryService;
@@ -33,6 +34,9 @@ public class PortfolioController {
 	@Autowired
 	private MarketSummaryService summaryService;
 	
+	@Autowired
+	private AccountService accountService;
+	
 	@RequestMapping(value = "/portfolio", method = RequestMethod.GET)
 	public String portfolio(Model model) {
 		logger.debug("/portfolio");
@@ -47,6 +51,7 @@ public class PortfolioController {
 		    //TODO: add account summary.
 		    try {
 		    	model.addAttribute("portfolio",portfolioService.getPortfolio(currentUserName));
+		    	model.addAttribute("accounts",accountService.getAccounts(currentUserName));
 		    } catch (HttpServerErrorException e) {
 		    	logger.debug("error retrieving portfolfio: " + e.getMessage());
 		    	model.addAttribute("portfolioRetrievalError",e.getMessage());

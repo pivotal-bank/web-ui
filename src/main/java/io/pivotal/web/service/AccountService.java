@@ -39,6 +39,7 @@ public class AccountService {
 		logger.debug("Looking for account with userId: " + user);
 		
 	    Account[] accounts = restTemplate.getForObject("http://" + accountsService + "/accounts?name={user}", Account[].class, user);
+	    
 	    return Arrays.asList(accounts);
 	}
 	
