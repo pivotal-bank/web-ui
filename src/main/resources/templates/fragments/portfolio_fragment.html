@@ -95,12 +95,15 @@
 										th:text="${account.name + ' - ' + account.currency}">Account</option>
 							</select>
 							</td>
-								<td class="gray"><input type="hidden" th:value="${entry.value.symbol}"
-									id="symbol" name="symbol" /> <input type="hidden"
-									th:value="${#numbers.formatDecimal(entry.value.currentValue, 0, 'COMMA', 2, 'POINT')}"
-									id="price" name="price" /> <input type="hidden" th:value="SELL" id="orderType"
-									name="orderType" /> <input type="number" id="quantity-input" class="form-control"
-									min="1" th:attr="max=${entry.value.quantity}" th:field="*{quantity}" /></td>
+								<td class="gray">
+								<input type="hidden" th:value="${entry.value.symbol}" id="symbol" name="symbol" />
+								<input type="hidden" th:value="${entry.value.currency}" id="currency" name="currency" /> 
+								<input type="hidden" th:value="${#numbers.formatDecimal(entry.value.currentValue, 0, 'COMMA', 2, 'POINT')}"
+									id="price" name="price" /> 
+								<input type="hidden" th:value="SELL" id="orderType" name="orderType" /> 
+								<input type="number" id="quantity-input" class="form-control"
+									min="1" th:attr="max=${entry.value.quantity}" th:field="*{quantity}" />
+								</td>
 								<td><a id="buyBtn"
 									th:attr="onclick='document.getElementById(\'sellform'+${entryStat.index}+'\').submit()'"
 									class=" sell btn-sm btn-success">Sell</a></td>
