@@ -9,6 +9,7 @@ public class Holding {
 	private Integer id;
 	private String symbol;
 	private Integer quantity = 0;
+	private String currency;
 	private BigDecimal purchaseValue = BigDecimal.ZERO;
 	private BigDecimal sellValue = BigDecimal.ZERO;
 	private Set<Order> orders = new HashSet<>();
@@ -73,15 +74,23 @@ public class Holding {
 	public void setSellValue(BigDecimal sellPrice) {
 		this.sellValue = sellPrice;
 	}
+	public String getCurrency() {
+		return currency;
+	}
+	public void setCurrency(String currency) {
+		this.currency = currency;
+	}
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("Holding [id=").append(id).append(", symbol=")
 				.append(symbol).append(", quantity=").append(quantity)
-				.append(", purchasePrice=").append(purchaseValue)
-				.append(", sellPrice=").append(sellValue).append(", orders=")
+				.append(", currency=").append(currency)
+				.append(", purchaseValue=").append(purchaseValue)
+				.append(", sellValue=").append(sellValue).append(", orders=")
 				.append(orders).append(", currentValue=").append(currentValue)
 				.append("]");
 		return builder.toString();
 	}
+
 }

@@ -60,6 +60,7 @@
 						<tr>
 							<th class="text-center">Symbol</th>
 							<th class="text-center">Held quantity</th>
+							<th class="text-center">Currency</th>
 							<th class="text-center">Total purchase price</th>
 							<th class="text-center">Total sold value</th>
 							<th class="text-center">Current unit value</th>
@@ -72,6 +73,7 @@
 						<tr th:each="entry : ${portfolio.holdings}" th:if="${entry.value.quantity &gt; 0}">
 							<td th:text="${entry.value.symbol}">symbol</td>
 							<td th:text="${entry.value.quantity}">0</td>
+							<td th:text="${entry.value.currency}">USD</td>
 							<td th:text="${entry.value.purchaseValue}">0</td>
 							<td
 								th:text="${#numbers.formatDecimal(entry.value.sellValue, 0, 'COMMA', 2, 'POINT')}">0</td>
