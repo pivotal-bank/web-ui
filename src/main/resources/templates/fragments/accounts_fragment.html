@@ -72,7 +72,9 @@
                         <label for="currency-input" class="control-label">Currency:</label>
                     </div>
 					<div class="col-sm-9">
-						<input type="text" value="" id="currency-input" class="form-control focused" th:field="*{currency}" />
+						<select id="currency-input" class="form-control focused" th:field="*{currency}">
+							<option th:value="USD" th:text="USD">USD</option>
+						</select>
                         <br/> <span id="currencyError" class="help-inline hide">Currency Error</span>
 					</div>
 				</div>
