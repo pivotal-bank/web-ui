@@ -57,8 +57,6 @@ jobs:
     trigger: true
   - task: build
     file: web/ci/tasks/build-web/task.yml
-    params:
-      ARTIFACT_ID: web
   - put: cf-zero-downtime-push
     resource: cf-env
     params:
