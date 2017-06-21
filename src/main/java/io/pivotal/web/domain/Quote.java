@@ -37,6 +37,8 @@ public class Quote {
 	private Double low;
 	@JsonProperty("Open")
 	private Double open;
+	@JsonProperty("Currency")
+	private String currency;
 	public String getStatus() {
 		return status;
 	}
@@ -127,6 +129,16 @@ public class Quote {
 	public void setOpen(Double open) {
 		this.open = open;
 	}
+	
+	public String getCurrency() {
+		return currency;
+	}
+	public void setCurrency(String currency) {
+		this.currency = currency;
+	}
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
@@ -140,7 +152,8 @@ public class Quote {
 				.append(", changeYTD=").append(changeYTD)
 				.append(", changePercentYTD=").append(changePercentYTD)
 				.append(", high=").append(high).append(", low=").append(low)
-				.append(", open=").append(open).append("]");
+				.append(", open=").append(open).append(", currency=")
+				.append(currency).append("]");
 		return builder.toString();
 	}
 

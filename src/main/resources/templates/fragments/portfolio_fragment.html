@@ -37,7 +37,7 @@
 						<tr th:if="${account != null}" class="alert alert-info">
 							<td>Total Cash</td>
 							<td class="average"
-								th:text="${#numbers.formatDecimal(account.balance, 0, 'COMMA', 2, 'POINT')}"></td>
+								th:text="${account.balance} ? ${#numbers.formatDecimal(account.balance, 0, 'COMMA', 2, 'POINT')}"></td>
 						</tr>
 					</tbody>
 				</table>
@@ -49,7 +49,7 @@
 <div th:if="${portfolio != null}" th:fragment="portfolio-listing" class="row clearfix"
 	th:remove="tag">
 	<div class="col-md-12">
-		<div class="panel panel-default">
+		<div class="panel panel-default panel-with-min-width">
 			<div class="panel-heading">
 				<h3 class="panel-title">List of Holdings</h3>
 			</div>
@@ -60,18 +60,20 @@
 						<tr>
 							<th class="text-center">Symbol</th>
 							<th class="text-center">Held quantity</th>
+							<th class="text-center">Currency</th>
 							<th class="text-center">Total purchase price</th>
 							<th class="text-center">Total sold value</th>
 							<th class="text-center">Current unit value</th>
 							<th class="text-center">Current holding value</th>
 							<th class="text-center">Total Gain/Loss</th>
-							<th class="text-center" colspan="2">Sell</th>
+							<th class="text-center" colspan="3">Sell</th>
 						</tr>
 					</thead>
 					<tbody>
 						<tr th:each="entry : ${portfolio.holdings}" th:if="${entry.value.quantity &gt; 0}">
 							<td th:text="${entry.value.symbol}">symbol</td>
 							<td th:text="${entry.value.quantity}">0</td>
+							<td th:text="${entry.value.currency}">USD</td>
 							<td th:text="${entry.value.purchaseValue}">0</td>
 							<td
 								th:text="${#numbers.formatDecimal(entry.value.sellValue, 0, 'COMMA', 2, 'POINT')}">0</td>
@@ -87,12 +89,21 @@
 
 							<form th:id="'sellform'+${entryStat.index}" action="#" th:action="@{/order}"
 								method="post" th:object="${order}" class="form-inline">
-								<td class="gray"><input type="hidden" th:value="${entry.value.symbol}"
-									id="symbol" name="symbol" /> <input type="hidden"
-									th:value="${#numbers.formatDecimal(entry.value.currentValue, 0, 'COMMA', 2, 'POINT')}"
-									id="price" name="price" /> <input type="hidden" th:value="SELL" id="orderType"
-									name="orderType" /> <input type="number" id="quantity-input" class="form-control"
-									min="1" th:attr="max=${entry.value.quantity}" th:field="*{quantity}" /></td>
+								<td>
+							<select th:field="*{accountId}" name="account">
+									<option th:each="account : ${accounts}" th:value="${account.id}"
+										th:text="${account.name + ' - ' + account.currency}">Account</option>
+							</select>
+							</td>
+								<td class="gray">
+								<input type="hidden" th:value="${entry.value.symbol}" id="symbol" name="symbol" />
+								<input type="hidden" th:value="${entry.value.currency}" id="currency" name="currency" /> 
+								<input type="hidden" th:value="${#numbers.formatDecimal(entry.value.currentValue, 0, 'COMMA', 2, 'POINT')}"
+									id="price" name="price" /> 
+								<input type="hidden" th:value="SELL" id="orderType" name="orderType" /> 
+								<input type="number" id="quantity-input" class="form-control"
+									min="1" th:attr="max=${entry.value.quantity}" th:field="*{quantity}" />
+								</td>
 								<td><a id="buyBtn"
 									th:attr="onclick='document.getElementById(\'sellform'+${entryStat.index}+'\').submit()'"
 									class=" sell btn-sm btn-success">Sell</a></td>
@@ -132,6 +143,7 @@
 						<th class="text-center">Order Fee</th>
 						<th class="text-center">Order Type</th>
 						<th class="text-center">Symbol</th>
+						<th class="text-center">Currency</th>
 						<th class="text-center">Price</th>
 						<th class="text-center">Quantity</th>
 					</tr>
@@ -151,6 +163,7 @@
 						<td th:text="${txn.orderFee}">0</td>
 						<td th:text="${txn.orderType}">BUY</td>
 						<td th:text="${txn.symbol}">OOOO</td>
+						<td th:text="${txn.currency}">USD</td>
 						<td th:text="${txn.price}">0</td>
 						<td th:text="${txn.quantity}">0</td>
 					</tr>

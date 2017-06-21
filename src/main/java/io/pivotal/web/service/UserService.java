@@ -4,6 +4,7 @@ import java.util.Map;
 
 import io.pivotal.web.domain.Account;
 import io.pivotal.web.domain.AuthenticationRequest;
+import io.pivotal.web.domain.User;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,34 +26,33 @@ public class UserService {
 	@LoadBalanced
 	private RestTemplate restTemplate;
 	
-	@Value("${pivotal.accountsService.name}")
-	private String accountsService;
+	@Value("${pivotal.userService.name}")
+	private String userService;
 	
-	public void createAccount(Account account) {
-		logger.debug("Saving account with userId: " + account.getUserid());
-		String status = restTemplate.postForObject("http://" + accountsService + "/account/", account, String.class);
-		logger.info("Status from registering account for "+ account.getUserid()+ " is " + status);
+	public void createUser(User user) {
+		logger.debug("Creating user with userId: " + user.getUserid());
+		String status = restTemplate.postForObject("http://" + userService + "/users/", user, String.class);
+		logger.info("Status from registering account for "+ user.getUserid()+ " is " + status);
 	}
 	
 	public Map<String,Object> login(AuthenticationRequest request){
 		logger.debug("logging in with userId:" + request.getUsername());
-		Map<String,Object> result = (Map<String, Object>) restTemplate.postForObject("http://" + accountsService + "/login/".toString(), request, Map.class);
+		Map<String,Object> result = (Map<String, Object>) restTemplate.postForObject("http://" + userService + "/login/".toString(), request, Map.class);
 		return result;
 	}
 	
-	//TODO: change to /account/{user}
-	public Account getAccount(String user) {
-		logger.debug("Looking for account with userId: " + user);
+	public User getUser(String user) {
+		logger.debug("Looking for user with user name: " + user);
 		
-	    Account account = restTemplate.getForObject("http://" + accountsService + "/account/?name={user}", Account.class, user);
-	    logger.debug("Got Account: " + account);
+	    User account = restTemplate.getForObject("http://" + userService + "/users/{user}", User.class, user);
+	    logger.debug("Got user: " + account);
 	    return account;
 	}
 	
 	public void logout(String user) {
-		logger.debug("logging out account with userId: " + user);
+		logger.debug("logging out user with userId: " + user);
 		
-	    ResponseEntity<?> response = restTemplate.getForEntity("http://" + accountsService + "/logout/{user}", String.class, user);
+	    ResponseEntity<?> response = restTemplate.getForEntity("http://" + userService + "/logout/{user}", String.class, user);
 	    logger.debug("Logout response: " + response.getStatusCode());
 	}
 	

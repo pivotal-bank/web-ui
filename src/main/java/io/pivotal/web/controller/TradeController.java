@@ -8,11 +8,14 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
+import io.pivotal.web.domain.Account;
 import io.pivotal.web.domain.CompanyInfo;
 import io.pivotal.web.domain.Order;
 import io.pivotal.web.domain.Quote;
 import io.pivotal.web.domain.Search;
-import io.pivotal.web.service.MarketService;
+import io.pivotal.web.service.AccountService;
+import io.pivotal.web.service.PortfolioService;
+import io.pivotal.web.service.QuotesService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +39,13 @@ public class TradeController {
 			.getLogger(TradeController.class);
 	
 	@Autowired
-	private MarketService marketService;
+	private QuotesService marketService;
+	
+	@Autowired
+	private PortfolioService portfolioService;
+	
+	@Autowired
+	private AccountService accountService;
 	
 	@RequestMapping(value = "/trade", method = RequestMethod.GET)
 	public String showTrade(Model model) {
@@ -50,9 +59,10 @@ public class TradeController {
 		    String currentUserName = authentication.getName();
 		    logger.debug("User logged in: " + currentUserName);
 		    model.addAttribute("order", new Order());
-		    //TODO: add account summary?
+		    
 		    try {
-		    	model.addAttribute("portfolio",marketService.getPortfolio(currentUserName));
+		    	model.addAttribute("portfolio",portfolioService.getPortfolio(currentUserName));
+		    	model.addAttribute("accounts",accountService.getAccounts(currentUserName));
 		    } catch (HttpServerErrorException e) {
 		    	model.addAttribute("portfolioRetrievalError",e.getMessage());
 		    }
@@ -79,9 +89,12 @@ public class TradeController {
 		    String currentUserName = authentication.getName();
 		    logger.debug("User logged in: " + currentUserName);
 		    model.addAttribute("order", new Order());
+		    
+		    
 		    //TODO: add portfolio and account summary.
 		    try {
-		    	model.addAttribute("portfolio",marketService.getPortfolio(currentUserName));
+		    	model.addAttribute("portfolio",portfolioService.getPortfolio(currentUserName));
+		    	model.addAttribute("accounts",accountService.getAccounts(currentUserName));
 		    } catch (HttpServerErrorException e) {
 		    	model.addAttribute("portfolioRetrievalError",e.getMessage());
 		    }
@@ -100,14 +113,15 @@ public class TradeController {
 				if (!(authentication instanceof AnonymousAuthenticationToken)) {
 				    String currentUserName = authentication.getName();
 				    logger.debug("/order ORDER: " + order);
-				    order.setAccountId(currentUserName);
+				    order.setUserId(currentUserName);
 				    order.setCompletionDate(new Date());
 
-				    Order result = marketService.sendOrder(order);
+				    Order result = portfolioService.sendOrder(order);
 				    model.addAttribute("savedOrder", result);
 				    model.addAttribute("order", new Order());
 				    try {
-				    	model.addAttribute("portfolio",marketService.getPortfolio(currentUserName));
+				    	model.addAttribute("accounts",accountService.getAccounts(currentUserName));
+				    	model.addAttribute("portfolio",portfolioService.getPortfolio(currentUserName));
 				    } catch (HttpServerErrorException e) {
 				    	model.addAttribute("portfolioRetrievalError",e.getMessage());
 				    }
@@ -125,15 +139,18 @@ public class TradeController {
 		/*
 		 * Sleuth currently doesn't work with parallelStreams
 		 */
-		//get district companyinfos and get their respective quotes in parallel.
-		//List<Quote> result = companies.stream().collect(Collectors.toCollection(
-		//	      () -> new TreeSet<CompanyInfo>((p1, p2) -> p1.getSymbol().compareTo(p2.getSymbol())) 
-		//		)).parallelStream().map(n -> getQuote(n.getSymbol())).collect(Collectors.toList());
-		List<Quote> result = companies.stream().collect(Collectors.toCollection(
-			      () -> new TreeSet<CompanyInfo>((p1, p2) -> p1.getSymbol().compareTo(p2.getSymbol())) 
-				)).stream().map(n -> getQuote(n.getSymbol())).collect(Collectors.toList());
-		
-		List<Quote> quotes = result.parallelStream().filter(n -> n.getStatus().startsWith("SUCCESS")).collect(Collectors.toList());
+		//get distinct companyinfos and get their respective quotes in parallel.
+
+		List<String> symbols = companies.stream().map(company -> company.getSymbol()).collect(Collectors.toList());
+		logger.debug("symbols: fetching "+ symbols.size() + " quotes for following symbols: " + symbols);
+		List<String> distinctsymbols = symbols.stream().distinct().collect(Collectors.toList());
+		logger.debug("distinct: fetching "+ distinctsymbols.size() + " quotes for following symbols: " + distinctsymbols);
+		List<Quote> quotes;
+		if (distinctsymbols.size() > 0) {
+			quotes = marketService.getMultipleQuotes(distinctsymbols).stream().distinct().filter(quote -> quote.getName() != null && !"".equals(quote.getName())).collect(Collectors.toList());
+		} else {
+			quotes = new ArrayList<>();
+		}
 		return quotes;
 	}
 	
@@ -151,4 +168,5 @@ public class TradeController {
 		model.setViewName("error");
 		return model;
 	}
+	
 }

@@ -39,7 +39,7 @@ public class MarketSummaryService {
 	private String symbolsFS;
     
     @Autowired
-	private MarketService marketService;
+	private QuotesService marketService;
     
 	private MarketSummary summary = new MarketSummary();
 	

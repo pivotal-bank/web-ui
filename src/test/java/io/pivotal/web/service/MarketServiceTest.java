@@ -18,7 +18,7 @@ public class MarketServiceTest {
 	MockMvc mockMvc;
 
 	@InjectMocks
-	MarketService service;
+	QuotesService service;
 	
 	@Mock
 	RestTemplate restTemplate;

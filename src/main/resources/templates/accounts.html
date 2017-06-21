@@ -3,7 +3,7 @@
 	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
-<title>Spring Trader - Portfolio</title>
+<title>Spring Trader - Accounts</title>
 <div th:include="fragments/header_fragment :: header-includes" th:remove="tag"></div>
 
 </head>
@@ -13,19 +13,19 @@
 		 class="navbar navbar-inverse navbar-fixed-top">
 	</div>
 
-	<div class="container well well-lg container-with-min-width">
+	<div class="container well well-lg">
 		<div sec:authorize="hasAnyAuthority('USER')" th:remove="tag">
 			<div class="col-md-6">
-				<div th:if="${portfolio != null}" th:include="fragments/portfolio_fragment :: portfolio-summary" th:remove="tag"></div>
-				<div th:if="${portfolioRetrievalError != null}" th:include="fragments/portfolio_fragment :: portfolio-error" th:remove="tag"></div>
+				<div th:if="${accounts != null}" th:include="fragments/accounts_fragment :: accounts-summary" th:remove="tag"></div>
+				<div th:if="${accountsRetrievalError != null}" th:include="fragments/accounts_fragment :: accounts-error" th:remove="tag"></div>
 			</div>
             <div class="col-md-6" th:include="fragments/marketsummary_fragment :: summary"></div>
 
 			<div class="row">
-				<div th:if="${portfolio != null}" th:include="fragments/portfolio_fragment :: portfolio-listing" th:remove="tag"></div>
+				<div th:if="${portfolio != null}" th:include="fragments/accounts_fragment :: portfolio-listing" th:remove="tag"></div>
 			</div>
 			<div class="row">
-				<div th:if="${portfolio != null}" th:include="fragments/portfolio_fragment :: order-listing" th:remove="tag"></div>
+				<div th:if="${portfolio != null}" th:include="fragments/accounts_fragment :: order-listing" th:remove="tag"></div>
 			</div>
 		</div>
 
