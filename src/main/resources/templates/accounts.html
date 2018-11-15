@@ -9,26 +9,22 @@
 </head>
 <body>
 
-	<div sec:authorize="isAuthenticated()" th:include="fragments/navbar_fragment :: navbar"
-		 class="navbar navbar-inverse navbar-fixed-top">
+	<div th:include="fragments/navbar_fragment :: navbar" class="navbar navbar-inverse navbar-fixed-top">
 	</div>
 
 	<div class="container well well-lg">
-		<div sec:authorize="hasAnyAuthority('USER')" th:remove="tag">
-			<div class="col-md-6">
-				<div th:if="${accounts != null}" th:include="fragments/accounts_fragment :: accounts-summary" th:remove="tag"></div>
-				<div th:if="${accountsRetrievalError != null}" th:include="fragments/accounts_fragment :: accounts-error" th:remove="tag"></div>
-			</div>
-            <div class="col-md-6" th:include="fragments/marketsummary_fragment :: summary"></div>
-
-			<div class="row" th:if="${portfolio != null}">
-				<div th:include="fragments/accounts_fragment :: portfolio-listing" th:remove="tag"></div>
-			</div>
-			<div class="row" th:if="${portfolio != null}">
-				<div th:include="fragments/accounts_fragment :: order-listing" th:remove="tag"></div>
-			</div>
+		<div class="col-md-6">
+			<div th:if="${accounts != null}" th:include="fragments/accounts_fragment :: accounts-summary" th:remove="tag"></div>
+			<div th:if="${accountsRetrievalError != null}" th:include="fragments/accounts_fragment :: accounts-error" th:remove="tag"></div>
 		</div>
+		<div class="col-md-6" th:include="fragments/marketsummary_fragment :: summary"></div>
 
+		<div class="row" th:if="${portfolio != null}">
+			<div th:include="fragments/accounts_fragment :: portfolio-listing" th:remove="tag"></div>
+		</div>
+		<div class="row" th:if="${portfolio != null}">
+			<div th:include="fragments/accounts_fragment :: order-listing" th:remove="tag"></div>
+		</div>
 	</div>
 
 	<div th:include="fragments/quote_attribution_fragment :: quote_attribution"></div>

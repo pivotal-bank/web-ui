@@ -1,47 +1,46 @@
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 
-<th:block th:if="${portfolio != null}" th:fragment="portfolio-summary">
-	<div>
-		<div class="panel panel-default">
-			<div class="panel-heading">
-				<h3 class="panel-title">Portfolio Summary</h3>
-			</div>
-			<div class="panel-body">
-				<table class="table">
-					<tbody>
-						<tr>
-							<td>Number Of Holdings</td>
-							<td th:text="${#maps.size(portfolio.holdings)}">0</td>
-						</tr>
-						<tr>
-							<td>Current Value of held shares</td>
-							<td
-								th:text="${#numbers.formatDecimal(portfolio.currentTotalValue, 0, 'COMMA', 2, 'POINT')}">0</td>
-						</tr>
-						<tr>
-							<td>Total Purchase Value</td>
-							<td
-								th:text="${#numbers.formatDecimal(portfolio.purchaseValue, 0, 'COMMA', 2, 'POINT')}">0</td>
-						</tr>
-						<tr>
-							<td>Total Sold Value</td>
-							<td
-								th:text="${#numbers.formatDecimal(portfolio.sellValue, 0, 'COMMA', 2, 'POINT')}">0</td>
-						</tr>
-						<tr
-							th:class="${portfolio.currentTotalValue + portfolio.sellValue - portfolio.purchaseValue} &lt; 0? 'summary alert alert-block warning' : 'summary alert alert-block success'">
-							<td>Total Gain/Loss</td>
-							<td class="average"
-								th:text="${#numbers.formatDecimal(portfolio.currentTotalValue + portfolio.sellValue - portfolio.purchaseValue, 0, 'COMMA', 2, 'POINT')}">0</td>
-						</tr>
-						<tr th:if="${account != null}" class="alert alert-info">
-							<td>Total Cash</td>
-							<td class="average"
-								th:text="${account.balance} ? ${#numbers.formatDecimal(account.balance, 0, 'COMMA', 2, 'POINT')}"></td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
+<th:block th:fragment="portfolio-summary">
+
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<h3 class="panel-title">Portfolio Summary</h3>
+		</div>
+		<div class="panel-body">
+			<table class="table">
+				<tbody>
+					<tr>
+						<td>Number Of Holdings</td>
+						<td th:text="${#maps.size(portfolio.holdings)}">0</td>
+					</tr>
+					<tr>
+						<td>Current Value of held shares</td>
+						<td
+							th:text="${#numbers.formatDecimal(portfolio.currentTotalValue, 0, 'COMMA', 2, 'POINT')}">0</td>
+					</tr>
+					<tr>
+						<td>Total Purchase Value</td>
+						<td
+							th:text="${#numbers.formatDecimal(portfolio.purchaseValue, 0, 'COMMA', 2, 'POINT')}">0</td>
+					</tr>
+					<tr>
+						<td>Total Sold Value</td>
+						<td
+							th:text="${#numbers.formatDecimal(portfolio.sellValue, 0, 'COMMA', 2, 'POINT')}">0</td>
+					</tr>
+					<tr
+						th:class="${portfolio.currentTotalValue + portfolio.sellValue - portfolio.purchaseValue} &lt; 0? 'summary alert alert-block warning' : 'summary alert alert-block success'">
+						<td>Total Gain/Loss</td>
+						<td class="average"
+							th:text="${#numbers.formatDecimal(portfolio.currentTotalValue + portfolio.sellValue - portfolio.purchaseValue, 0, 'COMMA', 2, 'POINT')}">0</td>
+					</tr>
+					<tr th:if="${account != null}" class="alert alert-info">
+						<td>Total Cash</td>
+						<td class="average"
+							th:text="${account.balance} ? ${#numbers.formatDecimal(account.balance, 0, 'COMMA', 2, 'POINT')}"></td>
+					</tr>
+				</tbody>
+			</table>
 		</div>
 	</div>
 </th:block>

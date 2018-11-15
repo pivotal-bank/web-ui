@@ -1,0 +1,10 @@
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <th:block th:fragment="message">
+        <div class="alert alert-success" role="alert"  th:unless="${param.message == null}">
+            <span th:text="${param.message}">Message Text</span>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    </th:block>
+</html>

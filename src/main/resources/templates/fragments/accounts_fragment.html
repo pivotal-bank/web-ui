@@ -1,30 +1,28 @@
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 
-<th:block th:if="${accounts != null}" th:fragment="accounts-summary">
-	<div>
-		<div class="panel panel-default">
-			<div class="panel-heading clearfix">
-				<h3 class="panel-title pull-left">Accounts Summary</h3>
-				<div class="panel-title pull-right"><a class="btn btn-primary btn-sm" href="/openaccount">Create Account</a></div>
-			</div>
-			<div class="panel-body">
-				<table class="table">
-					<tr>
-						<td>Account Name</td>
-						<td>Account Number</td>
-						<td>Account Currency</td>
-						<td>Balance</td>
+<th:block th:fragment="accounts-summary">
+	<div class="panel panel-default">
+		<div class="panel-heading clearfix">
+			<h3 class="panel-title pull-left">Accounts Summary</h3>
+			<div class="panel-title pull-right"><a class="btn btn-primary btn-sm" href="/openaccount">Create Account</a></div>
+		</div>
+		<div class="panel-body">
+			<table class="table">
+				<tr>
+					<td>Account Name</td>
+					<td>Account Number</td>
+					<td>Account Currency</td>
+					<td>Balance</td>
+				</tr>
+				<tbody>
+					<tr th:each="account : ${accounts}">
+						<td th:text="${account.name}">Name</td>
+						<td th:text="${account.id}">Number</td>
+						<td th:text="${account.currency}">Currency</td>
+						<td th:text="${account.balance} ? ${#numbers.formatDecimal(account.balance, 0, 'COMMA', 2, 'POINT')}">Balance</td>
 					</tr>
-					<tbody>
-						<tr th:each="account : ${accounts}">
-							<td th:text="${account.name}">Name</td>
-							<td th:text="${account.id}">Number</td>
-							<td th:text="${account.currency}">Currency</td>
-							<td th:text="${account.balance} ? ${#numbers.formatDecimal(account.balance, 0, 'COMMA', 2, 'POINT')}">Balance</td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
+				</tbody>
+			</table>
 		</div>
 	</div>
 </th:block>
