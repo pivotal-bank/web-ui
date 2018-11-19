@@ -29,7 +29,7 @@
 
 <div th:if="${newaccount != null}" th:fragment="account-create" class="row clearfix"
 	th:remove="tag">
-		<div class="col-md-8 panel panel-default">
+		<div class="col-md-12 panel panel-default">
         <div class="panel-heading">
             <h3 class="panel-title">
                 Open Account&nbsp;&nbsp;&nbsp;<small>Please enter test data for creating the account</small>
@@ -44,20 +44,20 @@
 			</div>
 			<div class="col-md-6">
 				<div id="name-control" class="form-group">
-                    <div class="col-sm-3">
+                    <div class="col-md-3">
 					    <label for="name-input" class="control-label">Account Name:</label>
                     </div>
-					<div class="col-sm-9">
+					<div class="col-md-9">
 						<input type="text" value="" id="name-input" class="form-control" th:field="*{name}" />
 						<br/>
 						<span id="nameError" class="help-inline hide">Name error</span>
 					</div>
 				</div>
 				<div id="type-control" class="form-group">
-                    <div class="col-sm-3">
+                    <div class="col-md-3">
                         <label for="type-input" class="control-label">Type:</label>
                     </div>
-					<div class="col-sm-9">
+					<div class="col-md-9">
 						<select id="type-input" class="form-control focused" th:field="*{type}">
 							<option th:value="CURRENT" th:text="CURRENT">CURRENT</option>
 							<option th:value="SAVINGS" th:text="SAVINGS">SAVINGS</option>
@@ -66,10 +66,10 @@
 					</div>
 				</div>
 				<div id="currency-control" class="form-group">
-                    <div class="col-sm-3">
+                    <div class="col-md-3">
                         <label for="currency-input" class="control-label">Currency:</label>
                     </div>
-					<div class="col-sm-9">
+					<div class="col-md-9">
 						<select id="currency-input" class="form-control focused" th:field="*{currency}">
 							<option th:value="USD" th:text="USD">USD</option>
 						</select>
@@ -80,10 +80,10 @@
 			</div>
 			<div class="col-md-6">
 				<div id="balance-control" class="form-group">
-                    <div class="col-sm-3">
+                    <div class="col-md-3">
 					    <label for="balance-input" class="control-label">Balance:</label>
                     </div>
-					<div class="col-sm-9">
+					<div class="col-md-9">
 						<input type="text" value="" id="balance-input" class="form-control" th:field="*{openbalance}" />
 						<br/>
 						<span id="balanceError" class="help-inline hide">Name error</span>

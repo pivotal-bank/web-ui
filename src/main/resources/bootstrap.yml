@@ -2,9 +2,14 @@ spring:
   profiles.active: local
   application:
      name: web-service
+  main:
+    allow-bean-definition-overriding: true
 info:
   build:
     group: ${group}
     name: ${name}
     description: ${description}
     version: ${version}
+logging:
+  level:
+    org.springframework.security: DEBUG

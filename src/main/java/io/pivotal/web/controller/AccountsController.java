@@ -1,6 +1,7 @@
 package io.pivotal.web.controller;
 
 import java.math.BigDecimal;
+import java.security.Principal;
 import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
@@ -8,17 +9,19 @@ import javax.servlet.http.HttpServletRequest;
 import io.pivotal.web.domain.Account;
 import io.pivotal.web.domain.Order;
 import io.pivotal.web.domain.Search;
-import io.pivotal.web.service.AccountService;
-import io.pivotal.web.service.PortfolioService;
-import io.pivotal.web.service.QuotesService;
-import io.pivotal.web.service.MarketSummaryService;
+import io.pivotal.web.service.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
+import org.springframework.security.oauth2.client.annotation.RegisteredOAuth2AuthorizedClient;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -34,37 +37,22 @@ public class AccountsController {
 			.getLogger(AccountsController.class);
 	
 	@Autowired
-	private QuotesService marketService;
-	
-	@Autowired
 	private AccountService accountService;
 	
 	@Autowired
 	private MarketSummaryService summaryService;
 	
 	@RequestMapping(value = "/accounts", method = RequestMethod.GET)
-	public String accounts(Model model) {
+	@PreAuthorize("isFullyAuthenticated()")
+	public String accounts(Model model, @RegisteredOAuth2AuthorizedClient("pivotalbank") OAuth2AuthorizedClient oAuth2AuthorizedClient) {
 		logger.debug("/accounts");
 		model.addAttribute("marketSummary", summaryService.getMarketSummary());
-		
-		//check if user is logged in!
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		if (!(authentication instanceof AnonymousAuthenticationToken)) {
-		    String currentUserName = authentication.getName();
-		    logger.debug("accounts: User logged in: " + currentUserName);
-		    
-		    try {
-		    	model.addAttribute("accounts",accountService.getAccounts(currentUserName));
-		    } catch (HttpServerErrorException e) {
-		    	logger.debug("error retrieving accounts: " + e.getMessage());
-		    	model.addAttribute("accountsRetrievalError",e.getMessage());
-		    }
-		}
-		
+		model.addAttribute("accounts",accountService.getAccounts(oAuth2AuthorizedClient));
 		return "accounts";
 	}
 	
 	@RequestMapping(value = "/openaccount", method = RequestMethod.GET)
+	@PreAuthorize("isFullyAuthenticated()")
 	public String openAccount(Model model) {
 		Account account = new Account();
 		account.setOpenbalance(new BigDecimal(100000));
@@ -73,32 +61,17 @@ public class AccountsController {
 	}
 	
 	@RequestMapping(value = "/openaccount", method = RequestMethod.POST)
-	public String saveAccount(Model model,@ModelAttribute(value="newaccount") Account account) {
+	@PreAuthorize("isFullyAuthenticated()")
+	public String saveAccount(Model model,@ModelAttribute(value="newaccount") Account account,  @RegisteredOAuth2AuthorizedClient("pivotalbank") OAuth2AuthorizedClient oAuth2AuthorizedClient) {
 		logger.debug("saveAccounts: creating account: " + account);
-		String currentUserName = SecurityContextHolder.getContext().getAuthentication().getName(); 
-		account.setUserid(currentUserName);
 		account.setBalance(account.getOpenbalance());
 		account.setCreationdate(new Date());
 		
 		logger.info("saveAccounts: saving account: " + account);
 		
-		accountService.createAccount(account);
-		
-		model.addAttribute("marketSummary", summaryService.getMarketSummary());
-		model.addAttribute("accounts",accountService.getAccounts(currentUserName));
-		
-		return "accounts";
-	}
+		accountService.createAccount(account, oAuth2AuthorizedClient);
 
-	@ExceptionHandler({ Exception.class })
-	public ModelAndView error(HttpServletRequest req, Exception exception) {
-		logger.debug("Handling error: " + exception);
-		logger.warn("Exception: ", exception);
-		ModelAndView model = new ModelAndView();
-		model.addObject("errorCode", exception.getMessage());
-		model.addObject("errorMessage", exception);
-		model.setViewName("error");
-		return model;
+		return FlashService.redirectWithMessage("/accounts", String.format("Account '%s' created successfully", account.getName()));
 	}
 
 }

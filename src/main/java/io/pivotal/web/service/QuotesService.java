@@ -1,30 +1,17 @@
 package io.pivotal.web.service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-
 import io.pivotal.web.domain.CompanyInfo;
-import io.pivotal.web.domain.Order;
-import io.pivotal.web.domain.Portfolio;
 import io.pivotal.web.domain.Quote;
-import io.pivotal.web.exception.OrderNotSavedException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
 
-import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
+import java.util.*;
 
 
 @Service
@@ -32,15 +19,14 @@ import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 public class QuotesService {
 	private static final Logger logger = LoggerFactory
 			.getLogger(QuotesService.class);
-	@Autowired
-	@LoadBalanced
-	private RestTemplate restTemplate;
 
+	@Autowired
+	private WebClient webClient;
 
     @Value("${pivotal.quotesService.name}")
 	private String quotesService;
 	
-	@HystrixCommand(fallbackMethod = "getQuoteFallback")
+	//@HystrixCommand(fallbackMethod = "getQuoteFallback")
 	public Quote getQuote(String symbol) {
 		logger.debug("Fetching quote: " + symbol);
 		List<Quote> quotes = getMultipleQuotes(symbol);
@@ -59,11 +45,19 @@ public class QuotesService {
 		quote.setStatus("FAILED");
 		return quote;
 	}
-	@HystrixCommand(fallbackMethod = "getCompaniesFallback")
+	//@HystrixCommand(fallbackMethod = "getCompaniesFallback")
 	public List<CompanyInfo> getCompanies(String name) {
 		logger.debug("Fetching companies with name or symbol matching: " + name);
-		CompanyInfo[] infos = restTemplate.getForObject("http://" + quotesService + "/v1/company/{name}", CompanyInfo[].class, name);
-		return Arrays.asList(infos);
+
+		ParameterizedTypeReference<List<CompanyInfo>> typeRef = new ParameterizedTypeReference<List<CompanyInfo>>() {};
+		List<CompanyInfo> companyInfoList = webClient
+				.get()
+				.uri("//" + quotesService + "/v1/company/{name}")
+				.retrieve()
+				.bodyToMono(typeRef)
+				.block();
+		//CompanyInfo[] infos = restTemplate.getForObject("//" + quotesService + "/v1/company/{name}", CompanyInfo[].class, name);
+		return companyInfoList;
 	}
 	private List<CompanyInfo> getCompaniesFallback(String name) {
 		List<CompanyInfo> infos = new ArrayList<>();
@@ -77,8 +71,16 @@ public class QuotesService {
 	 */
 	public List<Quote> getMultipleQuotes(String symbols) {
 		logger.debug("retrieving multiple quotes: " + symbols);
-		Quote[] quotesArr = restTemplate.getForObject("http://" + quotesService + "/v1/quotes?q={symbols}", Quote[].class, symbols);
-		List<Quote> quotes = Arrays.asList(quotesArr);
+		ParameterizedTypeReference<List<Quote>> typeRef = new ParameterizedTypeReference<List<Quote>>() {};
+		List<Quote> quotes = webClient
+				.get()
+				.uri("//" + quotesService + "/v1/quotes?q=" + symbols)
+				.retrieve()
+				.bodyToMono(typeRef)
+				.block();
+
+		//Quote[] quotesArr = restTemplate.getForObject("//" + quotesService + "/v1/quotes?q={symbols}", Quote[].class, symbols);
+		//List<Quote> quotes = Arrays.asList(quotesArr);
 		logger.debug("Received quotes: {}",quotes);
 		return quotes;
 		

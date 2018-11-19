@@ -9,6 +9,7 @@
 <body>
     <div th:include="fragments/navbar_fragment :: navbar" class="navbar navbar-inverse navbar-fixed-top"/>
 	<div class="container well well-lg container-with-min-width">
+		<div th:include="fragments/message :: message" th:remove="tag"></div>
 		<div th:include="fragments/trade_fragment :: saved_order" th:remove="tag"></div>
 		<div th:include="fragments/trade_fragment :: company_input" th:remove="tag"></div>
 		<div th:include="fragments/trade_fragment :: quote_list" th:remove="tag"></div>
