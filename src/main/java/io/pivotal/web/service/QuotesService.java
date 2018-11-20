@@ -52,7 +52,7 @@ public class QuotesService {
 		ParameterizedTypeReference<List<CompanyInfo>> typeRef = new ParameterizedTypeReference<List<CompanyInfo>>() {};
 		List<CompanyInfo> companyInfoList = webClient
 				.get()
-				.uri("//" + quotesService + "/v1/company/{name}")
+				.uri("//" + quotesService + "/v1/company/" + name)
 				.retrieve()
 				.bodyToMono(typeRef)
 				.block();

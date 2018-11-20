@@ -34,7 +34,7 @@ public class UserService {
         log.debug("Creating user with userId: " + registrationRequest.getEmail());
         User user = webClient
                 .post()
-                .uri("//" + userService + "/users/register/")
+                .uri("//" + userService + "/users/register")
                 .contentType(MediaType.APPLICATION_JSON)
                 .syncBody(registrationRequest)
                 .retrieve()

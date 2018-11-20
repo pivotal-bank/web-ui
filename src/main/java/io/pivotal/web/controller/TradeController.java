@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -83,12 +84,9 @@ public class TradeController {
 	
 	@RequestMapping(value = "/order", method = RequestMethod.POST)
 	public String buy(Model model, @ModelAttribute("order") Order order, @RegisteredOAuth2AuthorizedClient("pivotalbank") OAuth2AuthorizedClient oAuth2AuthorizedClient) {
-		model.addAttribute("search", new Search());
 		order.setCompletionDate(new Date());
 		Order result = portfolioService.sendOrder(order, oAuth2AuthorizedClient);
-		model.addAttribute("savedOrder", result);
-		model.addAttribute("order", new Order());
-		return FlashService.redirectWithMessage("/trede", "Order successful!");
+		return FlashService.redirectWithMessage("/trade", "Order successful!");
 	}
 	
 	

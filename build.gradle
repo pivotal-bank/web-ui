@@ -105,6 +105,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("org.springframework.security:spring-security-oauth2-client")
     implementation("org.springframework.security:spring-security-oauth2-jose")
+    implementation("io.projectreactor.netty:reactor-netty")
     compileOnly('org.projectlombok:lombok:1.16.20')
     
 

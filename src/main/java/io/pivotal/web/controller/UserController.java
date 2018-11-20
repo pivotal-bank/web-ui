@@ -1,10 +1,7 @@
 package io.pivotal.web.controller;
 
 import io.pivotal.web.domain.RegistrationRequest;
-import io.pivotal.web.service.AccountService;
-import io.pivotal.web.service.MarketSummaryService;
-import io.pivotal.web.service.PortfolioService;
-import io.pivotal.web.service.UserService;
+import io.pivotal.web.service.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -51,12 +48,11 @@ public class UserController {
 	@GetMapping("/home")
 	public String authorizedHome(Model model, @AuthenticationPrincipal OAuth2User principal, @RegisteredOAuth2AuthorizedClient("pivotalbank") OAuth2AuthorizedClient oAuth2AuthorizedClient) {
 		model.addAttribute("marketSummary", summaryService.getMarketSummary());
-		model.addAttribute("principal", principal);
 		String currentUserName = principal.getName();
 		log.debug("User logged in: " + currentUserName);
 		model.addAttribute("accounts",accountService.getAccounts(oAuth2AuthorizedClient));
-		//model.addAttribute("portfolio",portfolioService.getPortfolio(oAuth2AuthorizedClient));
-		//model.addAttribute("user", userService.getUser(currentUserName, oAuth2AuthorizedClient));
+		model.addAttribute("portfolio",portfolioService.getPortfolio(oAuth2AuthorizedClient));
+		model.addAttribute("user", userService.getUser(currentUserName, oAuth2AuthorizedClient));
 		return "index";
 	}
 
@@ -76,6 +72,6 @@ public class UserController {
 			return "registration";
 		}
 		this.userService.registerUser(registrationRequest);
-		return "redirect:/?message=" + String.format("User %s successfully registered", registrationRequest.getEmail());
+		return FlashService.redirectWithMessage( "/", String.format("User %s successfully registered", registrationRequest.getEmail()));
 	}
 }

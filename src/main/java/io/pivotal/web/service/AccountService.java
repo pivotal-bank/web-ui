@@ -44,8 +44,9 @@ public class AccountService {
         String status = webClient
                 .post()
                 .uri("//" + accountsService + "/accounts/")
-                .attributes(oauth2AuthorizedClient(oAuth2AuthorizedClient))
+                .contentType(MediaType.APPLICATION_JSON)
                 .syncBody(account)
+                .attributes(oauth2AuthorizedClient(oAuth2AuthorizedClient))
                 .retrieve()
                 .bodyToMono(String.class)
                 .block();
