@@ -1,9 +1,20 @@
 ---
 applications:
 - name: webtrader
-  random-route: true
+  routes:
+    - route: webtrader-prod.cfapps.lab01.pcf.pw
   timeout: 180
   instances: 1
   memory: 1G
-  path: libs/web-${version}.jar
-  services: [ discovery-service, circuit-breaker-dashboard, config-server ]
+  path: libs/web-ui-${version}.jar
+  services:
+    - service-registry
+    - circuit-breaker-dashboard
+    - config-server
+    - pivotal-bank-sso
+  env:
+    SECURITY_OAUTH2_CLIENT_SCOPE: "openid,pivotal.bank,trade,portfolio,account"
+    SSO_IDENTITY_PROVIDERS: uaa
+    SSO_SCOPES: "openid,pivotal.bank,trade,portfolio,account"
+    SSO_REDIRECT_URIS: https://webtrader-prod.cfapps.lab01.pcf.pw/login
+    SPRING_PROFILES_ACTIVE: cloud

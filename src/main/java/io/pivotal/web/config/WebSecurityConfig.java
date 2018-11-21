@@ -23,7 +23,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/", "/registration", "/hystrix.stream" ).permitAll()
+                .antMatchers("/", "/registration").permitAll()
                 .requestMatchers(EndpointRequest.toAnyEndpoint()).permitAll()
                 .anyRequest().fullyAuthenticated()
                 .and().logout().logoutUrl("/logout").logoutSuccessUrl("/").invalidateHttpSession(true)

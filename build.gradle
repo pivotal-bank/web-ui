@@ -86,6 +86,7 @@ dependencyManagement {
     imports {
         mavenBom "io.pivotal.spring.cloud:spring-cloud-services-dependencies:${springCloudServicesVersion}"
         mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+        mavenBom 'org.springframework.cloud:spring-cloud-stream-dependencies:Fishtown.RC2'
     }
 }
 dependencies {
@@ -105,6 +106,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("org.springframework.security:spring-security-oauth2-client")
     implementation("org.springframework.security:spring-security-oauth2-jose")
+    implementation('org.springframework.cloud:spring-cloud-stream')
+    implementation('org.springframework.cloud:spring-cloud-starter-stream-rabbit')
     implementation("io.projectreactor.netty:reactor-netty")
     compileOnly('org.projectlombok:lombok:1.16.20')
     
