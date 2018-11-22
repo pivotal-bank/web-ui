@@ -1,5 +1,6 @@
 package io.pivotal.web.config;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -25,6 +27,10 @@ public class AuthorityAssigningOidcUserService extends OidcUserService {
         OidcUser user;
 
         Set<GrantedAuthority> authorities = mapAuthorities(userRequest.getAccessToken().getScopes());
+        if (CollectionUtils.isEmpty(authorities)) {
+            authorities = new HashSet<>();
+            authorities.add(new SimpleGrantedAuthority("ROLE_PIVOTAL_BANK"));
+        }
         String userNameAttributeName = userRequest.getClientRegistration()
                 .getProviderDetails().getUserInfoEndpoint().getUserNameAttributeName();
         if (StringUtils.hasText(userNameAttributeName)) {

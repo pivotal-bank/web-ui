@@ -14,7 +14,7 @@ applications:
     - pivotal-bank-sso
   env:
     SECURITY_OAUTH2_CLIENT_SCOPE: "openid,pivotal.bank,trade,portfolio,account"
-    SSO_IDENTITY_PROVIDERS: uaa
+    SSO_IDENTITY_PROVIDERS: google
     SSO_SCOPES: "openid,pivotal.bank,trade,portfolio,account"
     SSO_REDIRECT_URIS: https://webtrader-prod.cfapps.lab01.pcf.pw/login
     SPRING_PROFILES_ACTIVE: cloud
