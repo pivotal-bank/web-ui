@@ -1,13 +1,13 @@
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <th:block th:fragment="accounts-summary">
 	<div class="panel panel-default">
 		<div class="panel-heading clearfix">
 			<h3 class="panel-title pull-left">Accounts Summary</h3>
-			<div class="panel-title pull-right"><a class="btn btn-primary btn-sm" href="/openaccount">Create Account</a></div>
+			<div class="panel-title pull-right" sec:authorize="hasAuthority('ROLE_ACCOUNT')"><a class="btn btn-primary btn-sm" href="/openaccount">Create Account</a></div>
 		</div>
 		<div class="panel-body">
-			<table class="table">
+			<table class="table" sec:authorize="hasAuthority('ROLE_ACCOUNT')">
 				<tr>
 					<td>Account Name</td>
 					<td>Account Number</td>
@@ -23,6 +23,7 @@
 					</tr>
 				</tbody>
 			</table>
+			<div sec:authorize="!hasAuthority('ROLE_ACCOUNT')">You do not have ROLE_ACCOUNT</div>
 		</div>
 	</div>
 </th:block>

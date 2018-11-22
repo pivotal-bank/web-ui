@@ -13,6 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2RestTemplate;
 import org.springframework.security.oauth2.client.filter.OAuth2ClientAuthenticationProcessingFilter;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -43,7 +45,7 @@ public class UserService {
         log.info("Status from registering account for " + registrationRequest.getEmail() + " is " + user.getId());
     }
 
-    public User getUser(String user, OAuth2AuthorizedClient oAuth2AuthorizedClient) {
+    public User getUser(String user, OAuth2AuthorizedClient oAuth2AuthorizedClient, OAuth2User oAuth2User) {
         log.debug("Looking for user with user name: " + user);
         User account = this.webClient
                 .get()
@@ -52,6 +54,11 @@ public class UserService {
                 .retrieve()
                 .bodyToMono(User.class)
                 .block();
+        if (oAuth2User instanceof OidcUser) {
+            OidcUser oidcUser = (OidcUser)oAuth2User;
+            account.setJwt(oidcUser.getIdToken().getTokenValue());
+        }
+
         return account;
     }
 }

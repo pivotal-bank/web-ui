@@ -19,13 +19,13 @@
 				<li><a id="nb-dashboard" th:href="@{/}">
                     <i class="fa fa-home"></i>&nbsp;&nbsp;Home
                 </a></li>
-                <li sec:authorize="isAuthenticated()"><a id="nb-accounts" th:href="@{/accounts}">
+                <li sec:authorize="hasAuthority('ROLE_ACCOUNT')"><a id="nb-accounts" th:href="@{/accounts}">
                     <i class="fa fa-university"></i>&nbsp;&nbsp;Accounts
                 </a></li>
-				<li sec:authorize="isAuthenticated()"><a id="nb-portfolio" th:href="@{/portfolio}">
+				<li sec:authorize="hasAuthority('ROLE_PORTFOLIO')"><a id="nb-portfolio" th:href="@{/portfolio}">
                     <i class="fa fa-book"></i>&nbsp;&nbsp;Portfolio
                 </a></li>
-				<li sec:authorize="isAuthenticated()"><a id="nb-trade" th:href="@{/trade}">
+				<li sec:authorize="hasAuthority('ROLE_TRADE')"><a id="nb-trade" th:href="@{/trade}">
                     <i class="fa fa-line-chart"></i>&nbsp;&nbsp;Trade
                 </a></li>
 			</ul>

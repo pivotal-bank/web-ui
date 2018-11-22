@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.client.HttpServerErrorException;
 
 @Controller
-@PreAuthorize("isAuthenticated()")
+@PreAuthorize("hasAuthority('ROLE_PORTFOLIO')")
 public class PortfolioController {
     private static final Logger logger = LoggerFactory
             .getLogger(PortfolioController.class);

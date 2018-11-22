@@ -1,4 +1,4 @@
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <th:block th:fragment="portfolio-summary">
 
@@ -7,7 +7,7 @@
 			<h3 class="panel-title">Portfolio Summary</h3>
 		</div>
 		<div class="panel-body">
-			<table class="table">
+			<table class="table" sec:authorize="hasAuthority('ROLE_PORTFOLIO')">
 				<tbody>
 					<tr>
 						<td>Number Of Holdings</td>
@@ -41,6 +41,7 @@
 					</tr>
 				</tbody>
 			</table>
+			<div sec:authorize="!hasAuthority('ROLE_PORTFOLIO')">You do not have ROLE_PORTFOLIO</div>
 		</div>
 	</div>
 </th:block>

@@ -32,6 +32,7 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
+@PreAuthorize("hasAuthority('ROLE_ACCOUNT')")
 public class AccountsController {
 	private static final Logger logger = LoggerFactory
 			.getLogger(AccountsController.class);
@@ -43,7 +44,6 @@ public class AccountsController {
 	private MarketSummaryService summaryService;
 	
 	@RequestMapping(value = "/accounts", method = RequestMethod.GET)
-	@PreAuthorize("isFullyAuthenticated()")
 	public String accounts(Model model, @RegisteredOAuth2AuthorizedClient("pivotalbank") OAuth2AuthorizedClient oAuth2AuthorizedClient) {
 		logger.debug("/accounts");
 		model.addAttribute("marketSummary", summaryService.getMarketSummary());
@@ -52,7 +52,6 @@ public class AccountsController {
 	}
 	
 	@RequestMapping(value = "/openaccount", method = RequestMethod.GET)
-	@PreAuthorize("isFullyAuthenticated()")
 	public String openAccount(Model model) {
 		Account account = new Account();
 		account.setOpenbalance(new BigDecimal(100000));
@@ -61,7 +60,6 @@ public class AccountsController {
 	}
 	
 	@RequestMapping(value = "/openaccount", method = RequestMethod.POST)
-	@PreAuthorize("isFullyAuthenticated()")
 	public String saveAccount(Model model,@ModelAttribute(value="newaccount") Account account,  @RegisteredOAuth2AuthorizedClient("pivotalbank") OAuth2AuthorizedClient oAuth2AuthorizedClient) {
 		logger.debug("saveAccounts: creating account: " + account);
 		account.setBalance(account.getOpenbalance());

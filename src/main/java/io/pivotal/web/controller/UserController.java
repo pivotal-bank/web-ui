@@ -52,7 +52,7 @@ public class UserController {
 		log.debug("User logged in: " + currentUserName);
 		model.addAttribute("accounts",accountService.getAccounts(oAuth2AuthorizedClient));
 		model.addAttribute("portfolio",portfolioService.getPortfolio(oAuth2AuthorizedClient));
-		model.addAttribute("user", userService.getUser(currentUserName, oAuth2AuthorizedClient));
+		model.addAttribute("user", userService.getUser(currentUserName, oAuth2AuthorizedClient, principal));
 		return "index";
 	}
 

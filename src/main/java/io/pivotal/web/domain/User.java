@@ -22,4 +22,5 @@ public class User implements Serializable {
     private String givenNames;
     private String surname;
     private DateTime createdDate;
+    private String jwt;
 }

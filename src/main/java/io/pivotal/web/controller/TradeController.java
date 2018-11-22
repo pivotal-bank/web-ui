@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Controller
-@PreAuthorize("isFullyAuthenticated()")
+@PreAuthorize("hasAuthority('ROLE_TRADE')")
 public class TradeController {
 
 	private static final Logger logger = LoggerFactory

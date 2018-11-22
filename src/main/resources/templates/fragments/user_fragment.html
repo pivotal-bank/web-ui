@@ -24,6 +24,10 @@
                     <td style="width: 50%;">Roles</td>
                     <td style="width: 50%;" sec:authentication="principal.authorities"></td>
                 </tr>
+                <tr>
+                    <td style="width: 50%;">JWT</td>
+                    <td style="width: 50%;max-width:300px"><div style="overflow-wrap: break-word" th:text="${user.jwt}"></div></td>
+                </tr>
             </table>
         </div>
     </div>
