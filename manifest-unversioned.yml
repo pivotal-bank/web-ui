@@ -12,6 +12,7 @@ applications:
     - circuit-breaker-dashboard
     - config-server
     - pivotal-bank-sso
+    - newrelic
   env:
     SECURITY_OAUTH2_CLIENT_SCOPE: "openid,pivotal.bank,trade,portfolio,account"
     SSO_IDENTITY_PROVIDERS: google
