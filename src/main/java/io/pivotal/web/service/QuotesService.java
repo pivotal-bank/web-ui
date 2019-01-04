@@ -1,5 +1,6 @@
 package io.pivotal.web.service;
 
+import com.newrelic.api.agent.Trace;
 import io.pivotal.web.domain.CompanyInfo;
 import io.pivotal.web.domain.Quote;
 import org.slf4j.Logger;
@@ -27,6 +28,7 @@ public class QuotesService {
 	private String quotesService;
 	
 	//@HystrixCommand(fallbackMethod = "getQuoteFallback")
+	@Trace(async = true)
 	public Quote getQuote(String symbol) {
 		logger.debug("Fetching quote: " + symbol);
 		List<Quote> quotes = getMultipleQuotes(symbol);
@@ -45,7 +47,9 @@ public class QuotesService {
 		quote.setStatus("FAILED");
 		return quote;
 	}
+
 	//@HystrixCommand(fallbackMethod = "getCompaniesFallback")
+	@Trace(async = true)
 	public List<CompanyInfo> getCompanies(String name) {
 		logger.debug("Fetching companies with name or symbol matching: " + name);
 
@@ -69,6 +73,7 @@ public class QuotesService {
 	 * @param symbols comma separated list of symbols.
 	 * @return
 	 */
+	@Trace(async = true)
 	public List<Quote> getMultipleQuotes(String symbols) {
 		logger.debug("retrieving multiple quotes: " + symbols);
 		ParameterizedTypeReference<List<Quote>> typeRef = new ParameterizedTypeReference<List<Quote>>() {};

@@ -1,5 +1,6 @@
 package io.pivotal.web.service;
 
+import com.newrelic.api.agent.Trace;
 import io.pivotal.web.domain.Order;
 import io.pivotal.web.domain.Portfolio;
 import org.reactivestreams.Publisher;
@@ -30,6 +31,8 @@ public class PortfolioService {
     @Value("${pivotal.portfolioService.name}")
 	private String portfolioService;
 
+
+	@Trace(async = true)
 	public Order sendOrder(Order order, OAuth2AuthorizedClient oAuth2AuthorizedClient ) {
 		logger.debug("send order: " + order);
 		//check result of http request to ensure its ok.
@@ -51,8 +54,8 @@ public class PortfolioService {
 		logger.debug("Order saved:: " + savedOrder);
 		return order;
 	}
-	
-	//@HystrixCommand(fallbackMethod = "getPortfolioFallback",  commandProperties = {@HystrixProperty(name = "execution.isolation.strategy", value = "SEMAPHORE")} )
+
+	@Trace(async = true)
 	public Portfolio getPortfolio(OAuth2AuthorizedClient oAuth2AuthorizedClient ) {
 
 		Publisher<Portfolio> portfolioPublisher = webClient

@@ -109,6 +109,7 @@ dependencies {
     implementation('org.springframework.cloud:spring-cloud-stream')
     implementation('org.springframework.cloud:spring-cloud-starter-stream-rabbit')
     implementation("io.projectreactor.netty:reactor-netty")
+    compileOnly("com.newrelic.agent.java:newrelic-api:4.8.0")
     compileOnly('org.projectlombok:lombok:1.16.20')
     
 

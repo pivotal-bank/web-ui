@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
+import com.newrelic.api.agent.Trace;
 import io.pivotal.web.domain.Account;
 
 import io.pivotal.web.domain.User;
@@ -42,6 +43,8 @@ public class AccountService {
     @Value("${pivotal.accountsService.name}")
     private String accountsService;
 
+
+    @Trace(async = true)
     public void createAccount(Account account, OAuth2AuthorizedClient oAuth2AuthorizedClient ) {
         logger.debug("Creating account ");
         String status = webClient
@@ -58,7 +61,7 @@ public class AccountService {
     }
 
 
-
+    @Trace(async = true)
     public List<Account> getAccounts(OAuth2AuthorizedClient oAuth2AuthorizedClient) {
         logger.debug("Looking for accounts");
         ParameterizedTypeReference<List<Account>> typeRef = new ParameterizedTypeReference<List<Account>>() {};
@@ -85,6 +88,8 @@ public class AccountService {
         return new ArrayList<>();
     }
 
+
+    @Trace(async = true)
     public List<Account> getAccountsByType(String type, OAuth2AuthorizedClient oAuth2AuthorizedClient) {
         logger.debug("Looking for account with type: " + type);
         ParameterizedTypeReference<List<Account>> typeRef = new ParameterizedTypeReference<List<Account>>() {};

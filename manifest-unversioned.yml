@@ -7,6 +7,8 @@ applications:
   instances: 1
   memory: 1G
   path: libs/web-ui-${version}.jar
+  buildpacks:
+   - https://github.com/cloudfoundry/java-buildpack.git#v4.16.1
   services:
     - service-registry
     - circuit-breaker-dashboard
@@ -15,7 +17,7 @@ applications:
     - newrelic
   env:
     SECURITY_OAUTH2_CLIENT_SCOPE: "openid,pivotal.bank,trade,portfolio,account"
-    SSO_IDENTITY_PROVIDERS: google
+    SSO_IDENTITY_PROVIDERS: uaa, google
     SSO_SCOPES: "openid,pivotal.bank,trade,portfolio,account"
     SSO_REDIRECT_URIS: https://webtrader-prod.cfapps.lab01.pcf.pw/login
     SPRING_PROFILES_ACTIVE: cloud

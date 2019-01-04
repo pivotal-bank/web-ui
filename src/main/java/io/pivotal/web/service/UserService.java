@@ -1,5 +1,6 @@
 package io.pivotal.web.service;
 
+import com.newrelic.api.agent.Trace;
 import io.pivotal.web.domain.RegistrationRequest;
 import io.pivotal.web.domain.User;
 import lombok.extern.slf4j.Slf4j;
@@ -32,6 +33,8 @@ public class UserService {
     @Value("${pivotal.userService.name}")
     private String userService;
 
+
+    @Trace(async = true)
     public void registerUser(RegistrationRequest registrationRequest) {
         log.debug("Creating user with userId: " + registrationRequest.getEmail());
         User user = webClient
@@ -45,6 +48,7 @@ public class UserService {
         log.info("Status from registering account for " + registrationRequest.getEmail() + " is " + user.getId());
     }
 
+    @Trace(async = true)
     public User getUser(String user, OAuth2AuthorizedClient oAuth2AuthorizedClient, OAuth2User oAuth2User) {
         log.debug("Looking for user with user name: " + user);
         User account = this.webClient
