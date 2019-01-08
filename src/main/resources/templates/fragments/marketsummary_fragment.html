@@ -1,5 +1,6 @@
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <th:block th:fragment="summary">
+
     <div id="market-carousel" class="carousel slide" data-ride="carousel">
         <!-- Indicators -->
         <ol class="carousel-indicators">
@@ -9,14 +10,15 @@
 
         <!-- Wrapper for slides -->
         <div class="carousel-inner" role="listbox">
-            <div class="item active">
+            <div class="item active" th:if="${marketSummary != null}">
                 <div th:include="fragments/marketsummary_fragment :: summary-quote(${marketSummary.topGainers},'Information Technology')" th:remove="tag"></div>
             </div>
-            <div class="item">
+            <div class="item" th:if="${marketSummary != null}">
                 <div th:include="fragments/marketsummary_fragment :: summary-quote(${marketSummary.topLosers},'Financial Services')" th:remove="tag"></div>
             </div>
         </div>
     </div>
+
 
     <script th:inline="javascript">
         /*<![CDATA[*/
@@ -64,12 +66,12 @@
 				<th>High</th>
 				<th>Low</th>
 			</tr>
-			<tr th:class="${#numbers.formatDecimal(quote.change, 1, 'COMMA', 2, 'POINT')} &gt; 0? 'text-success' : 'text-danger'" th:each="quote : ${quoteList}">
-				<td><strong th:text="${quote.symbol}"></strong></td>
-				<td th:text="${quote.lastPrice}"></td>
-				<td th:text="${#numbers.formatDecimal(quote.change, 1, 'COMMA', 2, 'POINT')} &gt; 0? ${#numbers.formatDecimal(quote.change, 0, 'COMMA', 2, 'POINT')} +' &uarr;' : ${#numbers.formatDecimal(quote.change, 0, 'COMMA', 2, 'POINT')} +' &darr;'"></td>
-				<td th:text="${quote.high}"></td>
-				<td th:text="${quote.low}"></td>
+			<tr th:each="quote : ${quoteList}">
+				<td th:classappend="${quote.change >= 0} ? text-success : text-danger"><strong th:text="${quote.symbol}"></strong></td>
+				<td th:classappend="${quote.change >= 0} ? text-success : text-danger" th:text="${quote.lastPrice}"></td>
+                <td th:classappend="${quote.change >= 0} ? text-success : text-danger" th:text="${quote.change}"></td>
+				<td th:classappend="${quote.change >= 0} ? text-success : text-danger" th:text="${quote.high}"></td>
+				<td th:classappend="${quote.change >= 0} ? text-success : text-danger" th:text="${quote.low}"></td>
 			</tr>
 			<tr></tr>
 		</table>

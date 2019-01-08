@@ -45,7 +45,9 @@ public class MarketSummaryService {
 	
 	public MarketSummary getMarketSummary() {
 		logger.debug("Retrieving Market Summary: " + summary);
-		
+		if (!summary.isInitialised()) {
+			retrieveMarketSummary();
+		}
 		return summary;
 	}
 	

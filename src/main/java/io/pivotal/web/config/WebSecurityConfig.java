@@ -1,57 +1,41 @@
 package io.pivotal.web.config;
 
-import io.pivotal.web.security.CustomAuthenticationProvider;
-import io.pivotal.web.security.CustomCredentialsService;
-import io.pivotal.web.security.LogoutSuccessHandler;
-
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.annotation.web.servlet.configuration.EnableWebMvcSecurity;
+import org.springframework.security.oauth2.config.annotation.web.configuration.EnableOAuth2Client;
 
 @Configuration
-@EnableWebMvcSecurity
+@EnableOAuth2Client
+@EnableGlobalMethodSecurity(prePostEnabled = true)
+@Slf4j
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
-	
-	@Autowired
-	private CustomCredentialsService customCredentialsService;
-	
-	@Autowired
-	private CustomAuthenticationProvider customAuthenticationProvider;
-	
-	@Autowired
-	private LogoutSuccessHandler logoutSuccessHandler;
-	
-	@Override
+
+    @Autowired
+    private AuthorityAssigningOidcUserService authorityAssigningOidcUserService;
+
+    @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http
-            .authorizeRequests()
-                .antMatchers("/", "/registration","/hystrix.stream").permitAll()
-                .anyRequest().authenticated()
-                .and()
-            .formLogin()
-                .loginPage("/login")
-                .loginProcessingUrl("/login")
-                .permitAll()
-                .and()
-            .logout()
-            .logoutSuccessHandler(logoutSuccessHandler)
-                .permitAll();
+        http.csrf().disable()
+                .authorizeRequests()
+                .antMatchers("/", "/registration").permitAll()
+                .requestMatchers(EndpointRequest.toAnyEndpoint()).permitAll()
+                .anyRequest().fullyAuthenticated()
+                .and().logout().logoutUrl("/logout").logoutSuccessUrl("/").invalidateHttpSession(true)
+                .and().oauth2Login().userInfoEndpoint().oidcUserService(authorityAssigningOidcUserService);
     }
-	@Override
+
+    @Override
     public void configure(WebSecurity web) throws Exception {
         web
                 .ignoring()
+                .antMatchers("/favicon.ico")
                 .antMatchers("/webjars/**")
                 .antMatchers("/images/**").antMatchers("/css/**").antMatchers("/js/**");
     }
-	
-	@Autowired
-	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-		auth.authenticationProvider(customAuthenticationProvider);
-		auth.userDetailsService(customCredentialsService);
-	}
 }

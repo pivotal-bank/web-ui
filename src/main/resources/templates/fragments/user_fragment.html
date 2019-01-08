@@ -1,31 +1,32 @@
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security" >
 
-<th:block th:if="${user != null}" th:fragment="user-stats">
-    <div class="panel panel-default">
+<th:block  th:fragment="user-stats">
+    <div class="panel panel-default" style="clear:both">
         <div class="panel-heading">
             <h3 class="panel-title">User Statistics</h3>
         </div>
         <div class="panel-body">
             <table class="table">
                 <tr>
-                    <td>Full Name</td>
-                    <td th:text="${user.fullname}">user</td>
+                    <td style="width: 50%;">Full Name</td>
+                    <td style="width: 50%;" th:text="${user.givenNames + ' ' + user.surname}">user</td>
                 </tr>
                 <tr>
-                    <td>User ID / Email</td>
-                    <td th:text=" ${user.userid + ' / ' + user.email}">user</td>
+                    <td style="width: 50%;">User ID / Email</td>
+                    <td style="width: 50%;" th:text=" ${user.email}">user</td>
                 </tr>
                 <tr>
-                    <td>Creation Date</td>
-                    <td th:text="${user.creationdate}">today</td>
+                    <td style="width: 50%;">Creation Date</td>
+                    <td style="width: 50%;" th:text="${user.createdDate}">today</td>
                 </tr>
                 <tr>
-                    <td>Total Logins</td>
-                    <td th:text="${user.logincount}">0</td>
+                    <td style="width: 50%;">Roles</td>
+                    <td style="width: 50%;" sec:authentication="principal.authorities"></td>
                 </tr>
                 <tr>
-                    <td>Session Creation Date</td>
-                    <td th:text="${user.lastlogin}">today</td>
+                    <td style="width: 50%;">JWT</td>
+                    <td style="width: 50%;max-width:300px"><div style="overflow-wrap: break-word" th:text="${user.jwt}"></div></td>
                 </tr>
             </table>
         </div>

@@ -1,0 +1,16 @@
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <th:block th:fragment="successMessage">
+        <div id="success-message" class="alert alert-success" role="alert"  th:if="${param.successMessage != null}">
+            <span th:text="${param.successMessage}">Message Text</span>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    </th:block>
+
+    <th:block th:fragment="errorMessage">
+        <div id="error-message" class="alert alert-danger" role="alert"  th:if="${errorMessage != null}">
+            <span th:text="${errorMessage}">Message Text</span>
+        </div>
+    </th:block>
+</html>
