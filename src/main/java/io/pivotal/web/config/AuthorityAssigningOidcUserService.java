@@ -14,7 +14,9 @@ import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -24,8 +26,12 @@ public class AuthorityAssigningOidcUserService extends OidcUserService {
     @Override
     public OidcUser loadUser(OidcUserRequest userRequest) throws OAuth2AuthenticationException {
         Assert.notNull(userRequest, "userRequest cannot be null");
-        OidcUserInfo userInfo = null;
+
         OidcUser user;
+
+        Map<String,Object> claims = new HashMap();
+        claims.put("accessToken", userRequest.getAccessToken().getTokenValue());
+        OidcUserInfo userInfo = new OidcUserInfo(claims);
 
         Set<GrantedAuthority> authorities = mapAuthorities(userRequest.getAccessToken().getScopes());
         if (CollectionUtils.isEmpty(authorities)) {

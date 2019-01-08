@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.MediaType;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
+import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
@@ -52,9 +53,9 @@ public class UserService {
                 .retrieve()
                 .bodyToMono(User.class)
                 .block();
-        if (oAuth2User instanceof OidcUser) {
-            OidcUser oidcUser = (OidcUser)oAuth2User;
-            account.setJwt(oidcUser.getIdToken().getTokenValue());
+        if (oAuth2User instanceof DefaultOidcUser) {
+            DefaultOidcUser oidcUser = (DefaultOidcUser)oAuth2User;
+            account.setJwt((String)oidcUser.getUserInfo().getClaims().get("accessToken"));
         }
 
         return account;
