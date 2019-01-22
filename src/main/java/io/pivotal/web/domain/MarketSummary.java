@@ -6,6 +6,8 @@ import java.util.List;
 
 public class MarketSummary {
 
+	private boolean initialised;
+
 	private List<Quote> topLosers;
 
 	private List<Quote> topGainers;
@@ -28,6 +30,7 @@ public class MarketSummary {
 
 	public void setTopLosers(List<Quote> topLosers) {
 		this.topLosers = topLosers;
+		this.initialised = true;
 	}
 
 	public List<Quote> getTopGainers() {
@@ -84,6 +87,10 @@ public class MarketSummary {
 
 	public void setSummaryDate(Date summaryDate) {
 		this.summaryDate = summaryDate;
+	}
+
+	public boolean isInitialised() {
+		return initialised;
 	}
 
 	@Override

@@ -1,59 +1,63 @@
 package io.pivotal.web.service;
 
-import java.util.Map;
-
-import io.pivotal.web.domain.Account;
-import io.pivotal.web.domain.AuthenticationRequest;
+import com.newrelic.api.agent.Trace;
+import io.pivotal.web.domain.RegistrationRequest;
 import io.pivotal.web.domain.User;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.MediaType;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
+import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
+
+import static org.springframework.security.oauth2.client.web.reactive.function.client.ServletOAuth2AuthorizedClientExchangeFilterFunction.oauth2AuthorizedClient;
 
 @Service
 @RefreshScope
+@Slf4j
 public class UserService {
-	private static final Logger logger = LoggerFactory
-			.getLogger(UserService.class);
-	
-	@Autowired
-	@LoadBalanced
-	private RestTemplate restTemplate;
-	
-	@Value("${pivotal.userService.name}")
-	private String userService;
-	
-	public void createUser(User user) {
-		logger.debug("Creating user with userId: " + user.getUserid());
-		String status = restTemplate.postForObject("http://" + userService + "/users/", user, String.class);
-		logger.info("Status from registering account for "+ user.getUserid()+ " is " + status);
-	}
-	
-	public Map<String,Object> login(AuthenticationRequest request){
-		logger.debug("logging in with userId:" + request.getUsername());
-		Map<String,Object> result = (Map<String, Object>) restTemplate.postForObject("http://" + userService + "/login/".toString(), request, Map.class);
-		return result;
-	}
-	
-	public User getUser(String user) {
-		logger.debug("Looking for user with user name: " + user);
-		
-	    User account = restTemplate.getForObject("http://" + userService + "/users/{user}", User.class, user);
-	    logger.debug("Got user: " + account);
-	    return account;
-	}
-	
-	public void logout(String user) {
-		logger.debug("logging out user with userId: " + user);
-		
-	    ResponseEntity<?> response = restTemplate.getForEntity("http://" + userService + "/logout/{user}", String.class, user);
-	    logger.debug("Logout response: " + response.getStatusCode());
-	}
-	
+
+    @Autowired(required = false)
+    private WebClient webClient;
+
+    @Value("${pivotal.userService.name}")
+    private String userService;
+
+
+    @Trace(async = true)
+    public void registerUser(RegistrationRequest registrationRequest) {
+        log.debug("Creating user with userId: " + registrationRequest.getEmail());
+        User user = webClient
+                .post()
+                .uri("//" + userService + "/users/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .syncBody(registrationRequest)
+                .retrieve()
+                .bodyToMono(User.class)
+                .block();
+        log.info("Status from registering account for " + registrationRequest.getEmail() + " is " + user.getId());
+    }
+
+    @Trace(async = true)
+    public User getUser(String user, OAuth2AuthorizedClient oAuth2AuthorizedClient, OAuth2User oAuth2User) {
+        log.debug("Looking for user with user name: " + user);
+        User account = this.webClient
+                .get()
+                .uri("//" + userService + "/users/"+ user)
+                .attributes(oauth2AuthorizedClient(oAuth2AuthorizedClient))
+                .retrieve()
+                .bodyToMono(User.class)
+                .block();
+        if (oAuth2User instanceof DefaultOidcUser) {
+            DefaultOidcUser oidcUser = (DefaultOidcUser)oAuth2User;
+            account.setJwt((String)oidcUser.getUserInfo().getClaims().get("accessToken"));
+        }
+
+        return account;
+    }
 }

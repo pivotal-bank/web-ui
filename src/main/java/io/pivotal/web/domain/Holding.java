@@ -1,8 +1,7 @@
 package io.pivotal.web.domain;
 
 import java.math.BigDecimal;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public class Holding {
 
@@ -12,7 +11,7 @@ public class Holding {
 	private String currency;
 	private BigDecimal purchaseValue = BigDecimal.ZERO;
 	private BigDecimal sellValue = BigDecimal.ZERO;
-	private Set<Order> orders = new HashSet<>();
+	private List<Order> orders = new ArrayList<>();
 	private BigDecimal currentValue = BigDecimal.ZERO;
 	public Integer getId() {
 		return id;
@@ -38,10 +37,10 @@ public class Holding {
 	public void setPurchaseValue(BigDecimal purchaseValue) {
 		this.purchaseValue = purchaseValue;
 	}
-	public Set<Order> getOrders() {
+	public List<Order> getOrders() {
 		return orders;
 	}
-	public void setOrders(Set<Order> orders) {
+	public void setOrders(List<Order> orders) {
 		this.orders = orders;
 	}
 	public BigDecimal getCurrentValue() {
